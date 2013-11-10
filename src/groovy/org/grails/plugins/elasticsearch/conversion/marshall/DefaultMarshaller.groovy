@@ -28,13 +28,16 @@ class DefaultMarshaller implements Marshaller {
             return ['class': object.class?.name, ref: ref.join('/')]
         }
         // Only marshall if the maxDepth has not been reached
-        if (marshallingContext.push(object, this.maxDepth)) {
-//        if (marshallingContext.currentDepth <= marshallingContext.maxDepth) {
-//            marshallingContext.currentDepth++
-            marshallResult = this.doMarshall(object)
-            marshallingContext.pop()
-//            marshallingContext.currentDepth--
-        } // otherwise returns nullValue
+	try {
+		if (marshallingContext.push(object, this.maxDepth)) {
+	//        if (marshallingContext.currentDepth <= marshallingContext.maxDepth) {
+	//            marshallingContext.currentDepth++
+		    marshallResult = this.doMarshall(object)
+		    marshallingContext.pop()
+	//            marshallingContext.currentDepth--
+		} // otherwise returns nullValue
+	} catch (e) {
+	}
 
         return marshallResult
     }
