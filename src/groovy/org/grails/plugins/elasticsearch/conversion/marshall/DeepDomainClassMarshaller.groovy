@@ -6,6 +6,8 @@ import org.codehaus.groovy.grails.commons.GrailsDomainClass
 import org.codehaus.groovy.grails.commons.DomainClassArtefactHandler
 import org.codehaus.groovy.grails.orm.hibernate.cfg.GrailsHibernateUtil
 
+import org.codehaus.groovy.grails.commons.GrailsClassUtils
+
 class DeepDomainClassMarshaller extends DefaultMarshaller {
   protected doMarshall(instance) {
     def domainClass = getDomainClass(instance)
@@ -26,7 +28,8 @@ class DeepDomainClassMarshaller extends DefaultMarshaller {
 
       // Domain marshalling
       if (DomainClassArtefactHandler.isDomainClass(propertyClass)) {
-        if (propertyValue.class.searchable) {   // todo fixme - will throw exception when no searchable field.
+	def implementsSearchable = propertyValue.metaClass.hasProperty (propertyValue.class, SEARCHABLE_PROPERTY_NAME)
+        if (implementsSearchable && propertyValue.class.searchable) {   // todo fixme - will throw exception when no searchable field.
           marshallingContext.lastParentPropertyName = prop.name
           marshallResult += [(prop.name): ([id: propertyValue.ident(), 'class': propertyClassName] + marshallingContext.delegateMarshalling(propertyValue, propertyMapping.maxDepth))]
         } else {
